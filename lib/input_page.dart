@@ -20,6 +20,8 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   GenderEnum selectedGender;
+  int height = 180;
+  int peso = 50;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class _InputPageState extends State<InputPage> {
                         });
                       },
                       cor: selectedGender == GenderEnum.male
-                          ? kcontainerActiveColor
+                          ? kContainerActiveColor
                           : kContainerInactiveColor,
                       cardChild: IconContent(
                         texto: 'MASCULINO',
@@ -58,7 +60,7 @@ class _InputPageState extends State<InputPage> {
                         });
                       },
                       cor: selectedGender == GenderEnum.female
-                          ? kcontainerActiveColor
+                          ? kContainerActiveColor
                           : kContainerInactiveColor,
                       cardChild: IconContent(
                           texto: 'FEMININO', icone: FontAwesomeIcons.venus),
@@ -69,7 +71,38 @@ class _InputPageState extends State<InputPage> {
             ),
             Expanded(
               child: MeuContainerReusable(
-                cor: kcontainerActiveColor,
+                cor: kContainerActiveColor,
+                cardChild: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'ALTURA',
+                      style: kTextoStyle,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: <Widget>[
+                        Text(height.toString(), style: kTextoTamanhoGrande),
+                        Text(
+                          'cm',
+                          style: kTextoStyle,
+                        )
+                      ],
+                    ),
+                    Slider(
+                      value: height.toDouble(),
+                      min: kMinHeight,
+                      max: kMaxHeight,
+                      onChanged: (double valor) {
+                        setState(() {
+                          height = valor.round();
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -77,12 +110,61 @@ class _InputPageState extends State<InputPage> {
                 children: <Widget>[
                   Expanded(
                     child: MeuContainerReusable(
-                      cor: kcontainerActiveColor,
+                      cor: kContainerActiveColor,
+                      cardChild: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'PESO',
+                            style: kTextoStyle,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: <Widget>[
+                              Text(
+                                peso.toString(),
+                                style: kTextoTamanhoGrande,
+                              ),
+                              Text(
+                                'Kg',
+                                style: kTextoStyle,
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            //TODO: widget Criado
+                            children: <Widget>[
+                              RoundIconCustom(
+                                icone: FontAwesomeIcons.plus,
+                                onPress: () {
+                                  setState(() {
+                                    peso < 300 ? peso = peso++ : peso = 300;
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                width: 15.0,
+                              ),
+                              RoundIconCustom(
+                                icone: FontAwesomeIcons.minus,
+                                onPress: () {
+                                  setState(() {
+                                    peso > 0 ? peso = peso-- : peso = 0;
+                                  });
+                                },
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   Expanded(
                     child: MeuContainerReusable(
-                      cor: kcontainerActiveColor,
+                      cor: kContainerActiveColor,
                     ),
                   ),
                 ],
@@ -103,6 +185,30 @@ class _InputPageState extends State<InputPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class RoundIconCustom extends StatelessWidget {
+  RoundIconCustom({@required this.icone, @required this.onPress});
+
+  final IconData icone;
+  Function onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(
+      onPressed: () {
+        onPress();
+      },
+      elevation: 6.0,
+      shape: CircleBorder(),
+      fillColor: Color(0xFF4C4F5E),
+      constraints: BoxConstraints.tightFor(
+        width: 56.0,
+        height: 56.0,
+      ),
+      child: Icon(icone),
     );
   }
 }
