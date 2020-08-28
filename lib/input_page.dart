@@ -135,7 +135,6 @@ class _InputPageState extends State<InputPage> {
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            //TODO: widget Criado
                             children: <Widget>[
                               RoundIconCustom(
                                 icone: FontAwesomeIcons.plus,
