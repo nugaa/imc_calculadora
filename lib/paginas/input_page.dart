@@ -1,10 +1,13 @@
-import 'package:bmi_app/ui/icon_content.dart';
-import 'package:bmi_app/ui/meucontainer_reusable.dart';
+import 'package:bmi_app/calculador_brain.dart';
+import 'package:bmi_app/componentes/round_icon_button.dart';
+import 'package:bmi_app/componentes/bottomcontainer_button.dart';
+import 'package:bmi_app/componentes/icon_content.dart';
+import 'package:bmi_app/componentes/meucontainer_reusable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
-import 'constantes.dart';
+import '../constantes.dart';
+import 'mostrarcalculo.dart';
 
 bool colorCheck;
 
@@ -20,14 +23,15 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   GenderEnum selectedGender;
-  int height = 180;
+  int altura = 180;
   int peso = 50;
+  int idade = 20;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BMI CALCULATOR'),
+        title: Text('CALCULADORA IMC'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -84,7 +88,7 @@ class _InputPageState extends State<InputPage> {
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
                       children: <Widget>[
-                        Text(height.toString(), style: kTextoTamanhoGrande),
+                        Text(altura.toString(), style: kTextoTamanhoGrande),
                         Text(
                           'cm',
                           style: kTextoStyle,
@@ -92,12 +96,12 @@ class _InputPageState extends State<InputPage> {
                       ],
                     ),
                     Slider(
-                      value: height.toDouble(),
+                      value: altura.toDouble(),
                       min: kMinHeight,
                       max: kMaxHeight,
                       onChanged: (double valor) {
                         setState(() {
-                          height = valor.round();
+                          altura = valor.round();
                         });
                       },
                     ),
@@ -137,10 +141,10 @@ class _InputPageState extends State<InputPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               RoundIconCustom(
-                                icone: FontAwesomeIcons.plus,
+                                icone: FontAwesomeIcons.minus,
                                 onPress: () {
                                   setState(() {
-                                    peso < 300 ? peso = peso++ : peso = 300;
+                                    peso > 0 ? peso-- : peso = 0;
                                   });
                                 },
                               ),
@@ -148,10 +152,10 @@ class _InputPageState extends State<InputPage> {
                                 width: 15.0,
                               ),
                               RoundIconCustom(
-                                icone: FontAwesomeIcons.minus,
+                                icone: FontAwesomeIcons.plus,
                                 onPress: () {
                                   setState(() {
-                                    peso > 0 ? peso = peso-- : peso = 0;
+                                    peso < 300 ? peso++ : peso = 300;
                                   });
                                 },
                               ),
@@ -164,50 +168,74 @@ class _InputPageState extends State<InputPage> {
                   Expanded(
                     child: MeuContainerReusable(
                       cor: kContainerActiveColor,
+                      cardChild: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'IDADE',
+                            style: kTextoStyle,
+                          ),
+                          Text(
+                            idade.toString(),
+                            style: kTextoTamanhoGrande,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              RoundIconCustom(
+                                icone: FontAwesomeIcons.minus,
+                                onPress: () {
+                                  setState(() {
+                                    idade > 1 ? idade-- : idade = 1;
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                width: 15.0,
+                              ),
+                              RoundIconCustom(
+                                icone: FontAwesomeIcons.plus,
+                                onPress: () {
+                                  setState(() {
+                                    idade > 1 && idade < 100
+                                        ? idade++
+                                        : idade++;
+                                  });
+                                },
+                              )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 15.0),
-              width: double.infinity,
-              height: kBottomContainerHeight,
-              decoration: BoxDecoration(
-                color: kColorBottomContainer,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(kBottomContainerRadius),
-                  topRight: Radius.circular(kBottomContainerRadius),
-                ),
-              ),
+            BottomContainerButton(
+              textoBotao: 'CALCULAR',
+              onPress: () {
+                CalculadoraBrain calc = CalculadoraBrain(
+                  height: altura,
+                  weight: peso,
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MostrarCalculo(
+                      resultado: calc.calcularBMI(),
+                      tipo: calc.getTipoBMI(),
+                      frase: calc.getFraseAviso(),
+                      cor: calc.getCor(),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class RoundIconCustom extends StatelessWidget {
-  RoundIconCustom({@required this.icone, @required this.onPress});
-
-  final IconData icone;
-  Function onPress;
-
-  @override
-  Widget build(BuildContext context) {
-    return RawMaterialButton(
-      onPressed: () {
-        onPress();
-      },
-      elevation: 6.0,
-      shape: CircleBorder(),
-      fillColor: Color(0xFF4C4F5E),
-      constraints: BoxConstraints.tightFor(
-        width: 56.0,
-        height: 56.0,
-      ),
-      child: Icon(icone),
     );
   }
 }
